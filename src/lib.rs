@@ -6,7 +6,14 @@ pub mod manga {
     use chrono::Local;
     use human_sort::compare;
     use serde::{Deserialize, Serialize};
+    use sqlx::FromRow;
     use std::cmp::Ordering;
+
+    #[derive(Debug, Deserialize, Serialize, Clone, Default)]
+    pub struct Config {
+        pub port: String,
+        pub database_url: String,
+    }
 
     #[derive(Debug, Deserialize, Serialize, Clone, Default)]
     pub struct SourceLogin {
@@ -24,7 +31,7 @@ pub mod manga {
         pub value: String,
     }
 
-    #[derive(Debug, Deserialize, Serialize, Clone, Default)]
+    #[derive(Debug, Deserialize, Serialize, Clone, Default, FromRow)]
     pub struct Source {
         pub id: i32,
         pub name: String,
@@ -32,7 +39,7 @@ pub mod manga {
         pub version: String,
     }
 
-    #[derive(Debug, Deserialize, Serialize, Clone, Default)]
+    #[derive(Debug, Deserialize, Serialize, Clone, Default, FromRow)]
     pub struct Manga {
         pub id: i32,
         pub title: String,
@@ -49,7 +56,7 @@ pub mod manga {
         pub is_favorite: bool,
     }
 
-    #[derive(Debug, Deserialize, Serialize, Clone, Eq, PartialEq, Ord)]
+    #[derive(Debug, Deserialize, Serialize, Clone, Eq, PartialEq, Ord, FromRow)]
     pub struct Chapter {
         pub id: i32,
         pub manga_id: i32,
@@ -152,7 +159,7 @@ pub mod manga {
         pub status: String,
     }
 
-    #[derive(Debug, Clone, Deserialize, Serialize)]
+    #[derive(Debug, Clone, Deserialize, Serialize, FromRow)]
     pub struct History {
         pub manga_id: i32,
         pub title: String,
@@ -168,7 +175,7 @@ pub mod manga {
         pub show_sep: Option<bool>,
     }
 
-    #[derive(Debug, Clone, Deserialize, Serialize)]
+    #[derive(Debug, Clone, Deserialize, Serialize, FromRow)]
     pub struct Update {
         pub manga_id: i32,
         pub title: String,
@@ -212,7 +219,7 @@ pub mod manga {
         pub status: String,
     }
 
-    #[derive(Debug, Serialize, Deserialize, Clone, Default)]
+    #[derive(Debug, Serialize, Deserialize, Clone, Default, FromRow)]
     pub struct FavoriteManga {
         pub manga_id: i32,
         pub title: String,
@@ -228,6 +235,7 @@ pub mod extensions {
     use std::io::Read;
 
     pub trait Extension: Send + Sync {
+        fn init(&mut self);
         fn info(&mut self) -> Source;
         fn get_mangas(&mut self, url: &String, param: Params, auth: String) -> Result<Vec<Manga>>;
         fn get_manga_info(&mut self, url: &String) -> Result<Manga>;

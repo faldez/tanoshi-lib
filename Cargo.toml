@@ -19,6 +19,7 @@ anyhow = "*"
 chrono = { version = "0.4", features = ["serde"] }
 human-sort = {version = "0.2"}
 ureq = "1"
+sqlx = { version = "0.3", default-features = false, features = [ "runtime-tokio", "macros", "chrono", "sqlite", "tls"] }
 
 [build-dependencies]
 rustc_version = "0.2"
